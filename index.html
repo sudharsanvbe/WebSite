@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Karmen</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Using a darker green gradient to match the image */
+            background: radial-gradient(circle at center, #2a5544ff 0%, #07130f 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Scattered Background Images */
+        .bg-element {
+            position: absolute;
+            border-radius: 20px; /* Slightly rounder like the original */
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 1;
+            /* Added transition for a nice hover effect */
+            transition: transform 0.3s ease;
+        }
+
+        /* 2. Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(var(--rot)); }
+            50% { transform: translateY(-15px) rotate(var(--rot)); }
+            100% { transform: translateY(0px) rotate(var(--rot)); }
+        }
+        .floating-img {
+            position: absolute;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            object-fit: cover;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Mouse Movement Container */
+        #parallax-scene {
+            position: absolute;
+            inset: 0;
+            transition: transform 0.1s ease-out;
+            pointer-events: none;
+        }
+        
+        #parallax-scene img {
+            pointer-events: auto;
+        }
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            width: 80%;
+            max-width: 500px;
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 40px;
+            
+            background: rgba(255, 255, 255, 0.07); 
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
+            
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .logo-container {
+            margin-bottom: 25px;
+        }
+
+        .logo-container img {
+            height: 50px; /* Control logo size here */
+            width: auto;
+        }
+
+        .next-btn {
+            display: inline-block; /* Required for <a> to respect padding */
+            background-color: white;
+            color: #000;
+            text-decoration: none; /* Remove underline */
+            padding: 16px 80px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 100px; /* Pill shape */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .next-btn:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 600px) {
+            h1 { font-size: 36px; }
+            .glass-card { padding: 40px 20px; }
+            .bg-element { display: none; } /* Hide scattered images on mobile for clarity */
+        }
+    </style>
+</head>
+<body class="ambient-bg h-screen w-full flex items-center justify-center relative">
+
+    <!-- BACKGROUND IMAGES (PARALLAX SCENE) -->
+    <div id="parallax-scene">
+        @php
+            // Using asset() directly as PHP code
+            $images = [
+                asset('images/A1.JPG'),
+                asset('images/A2.JPG'),
+                asset('images/A4.JPG'),
+                asset('images/A6.JPG'),
+                asset('images/A5.JPG'),
+                asset('images/A7.JPG'),
+                asset('images/A8.JPG'),
+                asset('images/A3.JPG'), 
+                asset('images/A9.JPG'),
+                asset('images/A10.JPG'),
+            ];
+
+            // Positioning Logic
+            $positions = [
+                ['top' => '5%',  'left' => '5%',   'rot' => '-6deg', 'delay' => '0s'],
+                ['top' => '10%', 'left' => '80%',  'rot' => '12deg', 'delay' => '1s'],
+                ['top' => '45%', 'left' => '-5%',  'rot' => '5deg',  'delay' => '2s'],
+                ['top' => '40%', 'left' => '85%',  'rot' => '-8deg', 'delay' => '0.5s'],
+                ['top' => '75%', 'left' => '10%',  'rot' => '-15deg','delay' => '1.5s'],
+                ['top' => '80%', 'left' => '75%',  'rot' => '10deg', 'delay' => '2.5s'],
+                ['top' => '-5%', 'left' => '40%',  'rot' => '3deg',  'delay' => '3s'],
+                ['top' => '85%', 'left' => '40%',  'rot' => '-5deg', 'delay' => '1.2s'],
+                ['top' => '20%', 'left' => '15%',  'rot' => '8deg',  'delay' => '0.8s'],
+                ['top' => '60%', 'left' => '88%',  'rot' => '-10deg','delay' => '2.2s'],
+            ];
+        @endphp
+
+        @foreach($images as $index => $img)
+            @if(isset($positions[$index]))
+            <img src="{{ $img }}" 
+                 class="floating-img w-40 md:w-56 h-28 md:h-40"
+                 style="
+                    top: {{ $positions[$index]['top'] }}; 
+                    left: {{ $positions[$index]['left'] }}; 
+                    --rot: {{ $positions[$index]['rot'] }};
+                    animation-delay: {{ $positions[$index]['delay'] }};">
+            @endif
+        @endforeach
+    </div>
+
+    <main class="glass-card">
+        <div class="logo-container">
+            <center>
+
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto object-contain">            
+            </center>
+        </div>
+
+        <h4 style="font-size: large;">Let's celebrate what made 2025 special</h4>
+<br>
+        <a class="next-btn">Next</a>
+    </main>
+
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const scene = document.getElementById('parallax-scene');
+            const x = (window.innerWidth - e.pageX * 2) / 25;
+            const y = (window.innerHeight - e.pageY * 2) / 25;
+            scene.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+    </script>
+
+</body>
+</html>
